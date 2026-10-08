@@ -112,7 +112,7 @@ function Editor({ event }) {
         const saved = isNew ? await createEvent(values) : await updateEvent(event.id, values)
         drafts.clear()
         guard.release()
-        navigate('/organise', { state: { saved: saved.title } })
+        navigate(`/organise/${saved.id}`, { state: { saved: saved.title } })
       } catch (error) {
         // The "server" found something (e.g. tickets booked meanwhile): go to that step to show it.
         const path = error.details && Object.keys(error.details)[0]

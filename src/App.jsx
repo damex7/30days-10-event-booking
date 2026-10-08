@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './components/layout/Layout.jsx'
 import Book from './pages/Book.jsx'
 import Confirmation from './pages/Confirmation.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 import EventEditor from './pages/EventEditor.jsx'
 import EventPage from './pages/EventPage.jsx'
 import Events from './pages/Events.jsx'
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       { path: '/bookings/:reference/ticket', element: <PrintTicket /> },
       { path: '/organise', element: <OrganiseHome /> },
       { path: '/organise/new', element: <EventEditor /> },
+      { path: '/organise/:id', element: <Dashboard /> },
       { path: '/organise/:id/edit', element: <EventEditor /> },
       { path: '*', element: <NotFound /> },
     ],
