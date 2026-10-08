@@ -21,10 +21,24 @@ export function ListItemActions({ idBase, name, index, count, onMove, onRemove, 
   const btn = `grid ${size} shrink-0 place-items-center rounded-full text-ink-soft transition-colors hover:bg-panel-2 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35`
   return (
     <div className="flex items-center gap-0.5">
-      <button type="button" id={`${idBase}-up`} className={btn} onClick={() => onMove(index, index - 1, 'up')} disabled={index === 0} aria-label={`Move ${name} up`}>
+      <button
+        type="button"
+        id={`${idBase}-up`}
+        className={btn}
+        onClick={() => onMove(index, index - 1, 'up')}
+        disabled={index === 0}
+        aria-label={`Move ${name} up`}
+      >
         <Icon name="up" className="size-5" />
       </button>
-      <button type="button" id={`${idBase}-down`} className={btn} onClick={() => onMove(index, index + 1, 'down')} disabled={index === count - 1} aria-label={`Move ${name} down`}>
+      <button
+        type="button"
+        id={`${idBase}-down`}
+        className={btn}
+        onClick={() => onMove(index, index + 1, 'down')}
+        disabled={index === count - 1}
+        aria-label={`Move ${name} down`}
+      >
         <Icon name="down" className="size-5" />
       </button>
       {onRemove && (

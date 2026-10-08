@@ -18,7 +18,8 @@ import { Icon } from '../ui/Icon.jsx'
   "Regular: 2" to screen-reader users.
 */
 function Stepper({ label, value, max, onChange }) {
-  const btn = 'grid size-11 place-items-center rounded-full border border-line-strong bg-panel text-ink transition-colors hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-40'
+  const btn =
+    'grid size-11 place-items-center rounded-full border border-line-strong bg-panel text-ink transition-colors hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-40'
   return (
     <div className="flex items-center gap-1">
       <button type="button" className={btn} onClick={() => onChange(value - 1)} disabled={value <= 0} aria-label={`Remove one ${label} ticket`}>

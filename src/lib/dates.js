@@ -89,10 +89,13 @@ const parts = fmt({ day: 'numeric', month: 'short', weekday: 'short' })
 /** "Saturday 14 November 2026" */
 export const formatDayLong = (iso) => dayLong.format(new Date(iso))
 /** "Sat 14 Nov" (adds the year when it isn't this year) */
-export const formatDayShort = (iso) =>
-  (lagosDateKey(iso).slice(0, 4) === lagosDateKey().slice(0, 4) ? dayShort : dayShortYear).format(new Date(iso))
+export const formatDayShort = (iso) => (lagosDateKey(iso).slice(0, 4) === lagosDateKey().slice(0, 4) ? dayShort : dayShortYear).format(new Date(iso))
 /** "12:00 pm" */
-export const formatTime = (iso) => time.format(new Date(iso)).replace(/\s?([ap])m$/i, ' $1m').toLowerCase()
+export const formatTime = (iso) =>
+  time
+    .format(new Date(iso))
+    .replace(/\s?([ap])m$/i, ' $1m')
+    .toLowerCase()
 /** "14 Nov 2026, 3:42 pm" for booking timestamps */
 export const formatDateTime = (iso) => dateTime.format(new Date(iso))
 

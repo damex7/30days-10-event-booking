@@ -106,8 +106,7 @@ export function promoDiscount(promo, subtotalKobo) {
   return Math.min(promo.value, subtotalKobo)
 }
 
-export const describePromo = (promo) =>
-  promo.kind === 'percent' ? `${promo.value}% off` : `₦${(promo.value / 100).toLocaleString('en-NG')} off`
+export const describePromo = (promo) => (promo.kind === 'percent' ? `${promo.value}% off` : `₦${(promo.value / 100).toLocaleString('en-NG')} off`)
 
 /* ---------- Totals ---------- */
 

@@ -58,7 +58,12 @@ export default function Dashboard() {
   const { id } = useParams()
   const location = useLocation()
   const state = useAsync(
-    (signal) => Promise.all([getEventForOrganiser(id, { signal }), getBookings(id, { signal }), getWaitlist(id, { signal })]).then(([event, bookings, waitlist]) => ({ event, bookings, waitlist })),
+    (signal) =>
+      Promise.all([getEventForOrganiser(id, { signal }), getBookings(id, { signal }), getWaitlist(id, { signal })]).then(([event, bookings, waitlist]) => ({
+        event,
+        bookings,
+        waitlist,
+      })),
     [id],
   )
   const [cancelling, setCancelling] = useState(null)
@@ -129,7 +134,12 @@ export default function Dashboard() {
       </div>
 
       {message && (
-        <p ref={messageRef} tabIndex={-1} role="status" className="mt-5 flex items-center gap-2 rounded-2xl bg-teal-soft p-4 font-bold text-teal-ink outline-none">
+        <p
+          ref={messageRef}
+          tabIndex={-1}
+          role="status"
+          className="mt-5 flex items-center gap-2 rounded-2xl bg-teal-soft p-4 font-bold text-teal-ink outline-none"
+        >
           <Icon name="check" className="size-5" />
           {message}
         </p>
@@ -137,9 +147,21 @@ export default function Dashboard() {
       {state.status === 'error' && <ErrorState className="mt-4" error={state.error} onRetry={state.retry} title="We couldn’t refresh the numbers" />}
 
       <div className={`mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4 ${state.status === 'loading' ? 'opacity-60' : ''}`} aria-busy={state.status === 'loading'}>
-        <StatTile label="Places booked" value={sales.sold.toLocaleString('en-NG')} detail={`of ${sales.capacity.toLocaleString('en-NG')} · ${Math.round((sales.sold / sales.capacity) * 100)}% full`} />
-        <StatTile label="Revenue" value={sales.revenueKobo ? formatNaira(sales.revenueKobo) : '₦0'} detail={sales.discountKobo ? `after ${formatNaira(sales.discountKobo)} in promos` : 'Confirmed bookings'} />
-        <StatTile label="Bookings" value={sales.bookings.toLocaleString('en-NG')} detail={sales.cancelled ? `${sales.cancelled} cancelled` : 'None cancelled'} />
+        <StatTile
+          label="Places booked"
+          value={sales.sold.toLocaleString('en-NG')}
+          detail={`of ${sales.capacity.toLocaleString('en-NG')} · ${Math.round((sales.sold / sales.capacity) * 100)}% full`}
+        />
+        <StatTile
+          label="Revenue"
+          value={sales.revenueKobo ? formatNaira(sales.revenueKobo) : '₦0'}
+          detail={sales.discountKobo ? `after ${formatNaira(sales.discountKobo)} in promos` : 'Confirmed bookings'}
+        />
+        <StatTile
+          label="Bookings"
+          value={sales.bookings.toLocaleString('en-NG')}
+          detail={sales.cancelled ? `${sales.cancelled} cancelled` : 'None cancelled'}
+        />
         <StatTile label="Waitlist" value={waitlist.length.toLocaleString('en-NG')} detail={waitlist.length ? 'waiting for a place' : 'Nobody waiting'} />
       </div>
 
@@ -206,8 +228,8 @@ export default function Dashboard() {
         {cancelling && (
           <>
             <p>
-              {cancelling.buyer.name}’s booking for {cancelling.attendees.length === 1 ? '1 guest' : `${cancelling.attendees.length} guests`} will be cancelled and the places released. This
-              demo doesn’t send emails, so let them know yourself.
+              {cancelling.buyer.name}’s booking for {cancelling.attendees.length === 1 ? '1 guest' : `${cancelling.attendees.length} guests`} will be cancelled
+              and the places released. This demo doesn’t send emails, so let them know yourself.
             </p>
             {cancelError && (
               <p role="alert" className="mt-2 font-bold text-danger">

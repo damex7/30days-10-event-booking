@@ -53,7 +53,9 @@ export default function PrintTicket() {
       </div>
       <h1 className="sr-only">Tickets for {event.title}</h1>
 
-      {booking.status === 'cancelled' && <p className="mb-4 rounded-xl bg-danger-soft p-3 font-bold text-danger">This booking was cancelled. These tickets are no longer valid.</p>}
+      {booking.status === 'cancelled' && (
+        <p className="mb-4 rounded-xl bg-danger-soft p-3 font-bold text-danger">This booking was cancelled. These tickets are no longer valid.</p>
+      )}
 
       <ol className="space-y-6">
         {booking.attendees.map((a, i) => (
@@ -61,9 +63,7 @@ export default function PrintTicket() {
             <EventCover cover={event.cover} className="h-14 print:hidden" />
             <div className="grid sm:grid-cols-[1fr_auto] print:grid-cols-[1fr_auto]">
               <div className="p-5">
-                <p className="text-xs font-bold tracking-widest text-gele-ink uppercase">
-                  {APP_NAME} · Admit one
-                </p>
+                <p className="text-xs font-bold tracking-widest text-gele-ink uppercase">{APP_NAME} · Admit one</p>
                 <h2 className="mt-1 font-display text-2xl leading-tight font-semibold">{event.title}</h2>
                 <p className="mt-2 text-sm">
                   <span className="font-bold">{formatDayLong(event.startsAt)}</span>, {formatTime(event.startsAt)} (Lagos time)

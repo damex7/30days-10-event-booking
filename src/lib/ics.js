@@ -13,7 +13,11 @@
     - UID must be unique and stable: the same booking downloaded twice
       updates one calendar entry instead of adding a duplicate.
 */
-const stamp = (iso) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+const stamp = (iso) =>
+  new Date(iso)
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '')
 
 const escapeText = (s) =>
   String(s ?? '')

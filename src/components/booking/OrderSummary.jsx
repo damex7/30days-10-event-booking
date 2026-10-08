@@ -26,7 +26,9 @@ export function OrderSummary({ totals, className }) {
       )}
       <div className="flex justify-between gap-3 border-t border-line pt-2 text-lg">
         <dt className="font-bold">Total</dt>
-        <dd className={totals.totalKobo === 0 ? 'font-bold text-teal-ink' : 'font-display font-bold'}>{totals.totalKobo === 0 ? 'Free' : formatNaira(totals.totalKobo)}</dd>
+        <dd className={totals.totalKobo === 0 ? 'font-bold text-teal-ink' : 'font-display font-bold'}>
+          {totals.totalKobo === 0 ? 'Free' : formatNaira(totals.totalKobo)}
+        </dd>
       </div>
     </dl>
   )

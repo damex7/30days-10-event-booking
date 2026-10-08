@@ -52,7 +52,9 @@ export function answerSummary(event, bookings) {
   const live = confirmed(bookings)
   const guests = guestsOf(bookings)
   return event.questions.map((q) => {
-    const sources = q.perAttendee ? guests.map((g) => ({ ...g, value: answerOf(q, g.booking, g.guest) })) : live.map((b) => ({ booking: b, guest: null, value: answerOf(q, b) }))
+    const sources = q.perAttendee
+      ? guests.map((g) => ({ ...g, value: answerOf(q, g.booking, g.guest) }))
+      : live.map((b) => ({ booking: b, guest: null, value: answerOf(q, b) }))
     const answered = sources.filter((s) => !isEmptyAnswer(s.value))
     const base = { question: q, asked: q.perAttendee ? 'guests' : 'bookings', answered: answered.length }
     const choices = choicesOf(q)
@@ -128,7 +130,22 @@ export function defaultCrossTab(event) {
  * bookings only, with a column per question. Money in naira, dates in Lagos time.
  */
 export function guestRows(event, bookings) {
-  const header = ['Booking reference', 'Booked at (Lagos)', 'Booked by', 'Buyer email', 'Buyer phone', 'Guest', 'Guest name', 'Guest email', 'Guest phone', 'Ticket', 'Ticket price (₦)', 'Booking total (₦)', 'Promo code', ...event.questions.map((q) => q.label)]
+  const header = [
+    'Booking reference',
+    'Booked at (Lagos)',
+    'Booked by',
+    'Buyer email',
+    'Buyer phone',
+    'Guest',
+    'Guest name',
+    'Guest email',
+    'Guest phone',
+    'Ticket',
+    'Ticket price (₦)',
+    'Booking total (₦)',
+    'Promo code',
+    ...event.questions.map((q) => q.label),
+  ]
   const rows = []
   for (const b of confirmed(bookings)) {
     b.attendees.forEach((a, i) => {

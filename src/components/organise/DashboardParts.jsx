@@ -57,7 +57,9 @@ export function SalesByType({ summary }) {
   return (
     <BarList
       items={summary.tickets.map((t) => ({ id: t.id, label: t.name, value: t.sold, max: t.quantity, ticket: t }))}
-      valueText={({ ticket: t }) => `${t.sold.toLocaleString('en-NG')} of ${t.quantity.toLocaleString('en-NG')}${t.priceKobo > 0 ? ` · ${formatNaira(t.revenueKobo)}` : ''}`}
+      valueText={({ ticket: t }) =>
+        `${t.sold.toLocaleString('en-NG')} of ${t.quantity.toLocaleString('en-NG')}${t.priceKobo > 0 ? ` · ${formatNaira(t.revenueKobo)}` : ''}`
+      }
     />
   )
 }
@@ -100,7 +102,12 @@ function QuestionSummary({ summary: s }) {
               ))}
             </ul>
             {s.answers.length > 5 && (
-              <button type="button" className="mt-2 text-sm font-bold text-gele-ink underline underline-offset-2" onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
+              <button
+                type="button"
+                className="mt-2 text-sm font-bold text-gele-ink underline underline-offset-2"
+                onClick={() => setShowAll((v) => !v)}
+                aria-expanded={showAll}
+              >
                 {showAll ? 'Show fewer' : `Show all ${s.answers.length}`}
               </button>
             )}
@@ -189,7 +196,11 @@ export function CrossTab({ event, bookings, initial }) {
                   </th>
                   {table.counts[ri].map((n, ci) => (
                     // A light wash of one hue, stronger for bigger counts: a heat-map hint. The number is always written.
-                    <td key={ci} className="px-2 py-2 text-right" style={{ backgroundColor: n ? `color-mix(in oklab, var(--color-gele) ${Math.round((n / max) * 28)}%, transparent)` : undefined }}>
+                    <td
+                      key={ci}
+                      className="px-2 py-2 text-right"
+                      style={{ backgroundColor: n ? `color-mix(in oklab, var(--color-gele) ${Math.round((n / max) * 28)}%, transparent)` : undefined }}
+                    >
                       {n}
                     </td>
                   ))}

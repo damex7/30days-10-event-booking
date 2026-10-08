@@ -111,7 +111,11 @@ export function cleanEvent(raw) {
     id: raw.id,
     slug: raw.slug,
     title: str(raw.title, 100),
-    category: oneOf(raw.category, CATEGORIES.map((c) => c.id), 'community'),
+    category: oneOf(
+      raw.category,
+      CATEGORIES.map((c) => c.id),
+      'community',
+    ),
     summary: str(raw.summary, 160),
     description: str(raw.description, 4000),
     cover: {
@@ -172,7 +176,10 @@ export function cleanBooking(raw) {
         answers: cleanAnswers(a.answers),
       })),
     answers: cleanAnswers(raw.answers),
-    promo: isObj(raw.promo) && str(raw.promo.code) && isKobo(raw.promo.discountKobo) ? { code: str(raw.promo.code, 20), discountKobo: raw.promo.discountKobo } : null,
+    promo:
+      isObj(raw.promo) && str(raw.promo.code) && isKobo(raw.promo.discountKobo)
+        ? { code: str(raw.promo.code, 20), discountKobo: raw.promo.discountKobo }
+        : null,
     subtotalKobo: raw.subtotalKobo,
     discountKobo: raw.discountKobo,
     totalKobo: raw.totalKobo,

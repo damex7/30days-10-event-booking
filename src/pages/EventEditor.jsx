@@ -185,7 +185,9 @@ function Editor({ event }) {
                   i === stepIndex ? 'border-gele bg-gele text-on-gele' : 'border-line-strong bg-panel text-ink-soft hover:bg-panel-2',
                 )}
               >
-                <span className={cx('grid size-6 place-items-center rounded-full text-xs', i === stepIndex ? 'bg-on-gele text-gele' : 'bg-panel-2')}>{i < stepIndex ? '✓' : i + 1}</span>
+                <span className={cx('grid size-6 place-items-center rounded-full text-xs', i === stepIndex ? 'bg-on-gele text-gele' : 'bg-panel-2')}>
+                  {i < stepIndex ? '✓' : i + 1}
+                </span>
                 {s.label}
               </button>
             </li>
@@ -251,7 +253,13 @@ function Editor({ event }) {
 
         {/* Below xl the preview is opened with a button, under the form. */}
         <div className="min-w-0 xl:sticky xl:top-24 xl:max-h-[calc(100dvh-7rem)] xl:overflow-y-auto">
-          <Button variant="secondary" className="mb-3 w-full xl:hidden" aria-expanded={showPreview} aria-controls="booking-preview" onClick={() => setShowPreview((s) => !s)}>
+          <Button
+            variant="secondary"
+            className="mb-3 w-full xl:hidden"
+            aria-expanded={showPreview}
+            aria-controls="booking-preview"
+            onClick={() => setShowPreview((s) => !s)}
+          >
             <Icon name="eye" className="size-4" />
             {showPreview ? 'Hide the guest’s view' : 'Show the guest’s view'}
           </Button>

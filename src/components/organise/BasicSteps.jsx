@@ -19,21 +19,36 @@ export function DetailsStep({ form }) {
     <div className="space-y-6">
       <Card>
         <TextField form={form} name="title" label="Event name" hint="What guests will see on the card and the page." />
-        <TextAreaField form={form} name="summary" label="One-line summary" optional rows={2} maxLength={160} hint="Shown on the event card. Up to 160 characters." />
-        <TextAreaField form={form} name="description" label="Description" rows={8} maxLength={4000} hint="What to expect, what to wear, what to bring. Leave a blank line between paragraphs." />
+        <TextAreaField
+          form={form}
+          name="summary"
+          label="One-line summary"
+          optional
+          rows={2}
+          maxLength={160}
+          hint="Shown on the event card. Up to 160 characters."
+        />
+        <TextAreaField
+          form={form}
+          name="description"
+          label="Description"
+          rows={8}
+          maxLength={4000}
+          hint="What to expect, what to wear, what to bring. Leave a blank line between paragraphs."
+        />
         <SelectField form={form} name="category" label="Category" options={CATEGORIES} />
       </Card>
 
       <Card title="Cover">
         <EventCover cover={form.values.cover} className="h-28 rounded-xl" />
-        <RadioGroupField form={form} name="cover.pattern" label="Pattern" options={COVER_PATTERNS.map((p) => ({ id: p, label: PATTERN_LABELS[p] }))} variant="pills" />
         <RadioGroupField
           form={form}
-          name="cover.tone"
-          label="Colour"
+          name="cover.pattern"
+          label="Pattern"
+          options={COVER_PATTERNS.map((p) => ({ id: p, label: PATTERN_LABELS[p] }))}
           variant="pills"
-          options={COVER_TONES.map((t) => ({ id: t, label: TONE_LABELS[t] }))}
         />
+        <RadioGroupField form={form} name="cover.tone" label="Colour" variant="pills" options={COVER_TONES.map((t) => ({ id: t, label: TONE_LABELS[t] }))} />
         <div aria-hidden="true" className="-mt-3 flex gap-2">
           {COVER_TONES.map((t) => (
             <span key={t} className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: TONES[t].bg }} />
@@ -42,10 +57,25 @@ export function DetailsStep({ form }) {
       </Card>
 
       <Card title="Organiser">
-        <TextField form={form} name="organiser.name" label="Organiser name" hint="A person, family, church or company, e.g. “The Adébáyọ̀ family”." autoComplete="organization" />
+        <TextField
+          form={form}
+          name="organiser.name"
+          label="Organiser name"
+          hint="A person, family, church or company, e.g. “The Adébáyọ̀ family”."
+          autoComplete="organization"
+        />
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField form={form} name="organiser.email" label="Contact email" type="email" inputMode="email" autoComplete="email" />
-          <TextField form={form} name="organiser.phone" label="Contact phone" type="tel" inputMode="tel" autoComplete="tel" optional hint="A Nigerian mobile." />
+          <TextField
+            form={form}
+            name="organiser.phone"
+            label="Contact phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            optional
+            hint="A Nigerian mobile."
+          />
         </div>
       </Card>
     </div>
@@ -65,7 +95,13 @@ export function WhenWhereStep({ form }) {
       </Card>
       <Card title="Where">
         <TextField form={form} name="venue.name" label="Venue name" />
-        <TextField form={form} name="venue.address" label="Address" autoComplete="street-address" hint="Street and area, e.g. 14 Ozumba Mbadiwe Avenue, Victoria Island." />
+        <TextField
+          form={form}
+          name="venue.address"
+          label="Address"
+          autoComplete="street-address"
+          hint="Street and area, e.g. 14 Ozumba Mbadiwe Avenue, Victoria Island."
+        />
         <SelectField form={form} name="venue.city" label="City" options={CITIES.map((c) => ({ id: c, label: c }))} />
       </Card>
     </div>

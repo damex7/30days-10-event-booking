@@ -70,8 +70,8 @@ export function Layout() {
       <footer data-print-hide className="border-t border-line bg-panel">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-6 text-sm text-ink-faint sm:flex-row sm:justify-between">
           <p>
-            <span className="font-display font-semibold text-ink italic">{APP_NAME}</span>: a Day 10 demo. Bookings are saved in this
-            browser only and no money changes hands.
+            <span className="font-display font-semibold text-ink italic">{APP_NAME}</span>: a Day 10 demo. Bookings are saved in this browser only and no money
+            changes hands.
           </p>
           <p>All times are Lagos time (WAT, UTC+1).</p>
         </div>

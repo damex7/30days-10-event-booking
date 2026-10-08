@@ -100,8 +100,7 @@ export function visibleQuestions(questions, { bookingAnswers = {}, guestAnswers 
  * (you picked "Gold", then switched aso-ebi to No) never leaves the form.
  */
 export function pruneAnswers(questions, { answers = {}, attendees = [] }) {
-  const keep = (list, source) =>
-    Object.fromEntries(list.filter((q) => !isEmptyAnswer(source?.[q.id])).map((q) => [q.id, source[q.id]]))
+  const keep = (list, source) => Object.fromEntries(list.filter((q) => !isEmptyAnswer(source?.[q.id])).map((q) => [q.id, source[q.id]]))
   return {
     answers: keep(visibleQuestions(questions, { bookingAnswers: answers, scope: 'booking' }), answers),
     attendees: attendees.map((a) => ({

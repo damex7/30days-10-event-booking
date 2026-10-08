@@ -120,8 +120,17 @@ export function BookingsTable({ bookings, onCancel }) {
                   Reference
                 </th>
                 {COLUMNS.map((c) => (
-                  <th key={c.id} scope="col" aria-sort={ariaSort(c.id)} className={`px-4 py-1 font-bold ${c.id === 'total' || c.id === 'tickets' ? 'text-right' : ''}`}>
-                    <button type="button" onClick={() => setFilter('sort', sortFor(c.id))} className="inline-flex min-h-10 items-center gap-1 rounded hover:text-gele-ink">
+                  <th
+                    key={c.id}
+                    scope="col"
+                    aria-sort={ariaSort(c.id)}
+                    className={`px-4 py-1 font-bold ${c.id === 'total' || c.id === 'tickets' ? 'text-right' : ''}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setFilter('sort', sortFor(c.id))}
+                      className="inline-flex min-h-10 items-center gap-1 rounded hover:text-gele-ink"
+                    >
                       {c.label}
                       <Icon name={ariaSort(c.id) === 'none' ? 'sort' : ariaSort(c.id) === 'ascending' ? 'up' : 'down'} className="size-4" />
                     </button>

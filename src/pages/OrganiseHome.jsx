@@ -40,7 +40,9 @@ export default function OrganiseHome() {
         <div>
           <p className="text-sm font-bold tracking-widest text-gele-ink uppercase">For organisers</p>
           <h1 className="mt-1 font-display text-4xl font-semibold">Your events</h1>
-          <p className="mt-1 max-w-xl text-ink-soft">Tickets, guest details and aso-ebi orders in one place, instead of a WhatsApp thread and three spreadsheets.</p>
+          <p className="mt-1 max-w-xl text-ink-soft">
+            Tickets, guest details and aso-ebi orders in one place, instead of a WhatsApp thread and three spreadsheets.
+          </p>
         </div>
         <Link to="/organise/new" className={buttonClass('primary', 'lg')}>
           <Icon name="plus" className="size-5" />

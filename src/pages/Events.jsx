@@ -22,7 +22,9 @@ export default function Events() {
           <h1 className="mt-2 max-w-2xl font-display text-4xl leading-tight font-semibold sm:text-5xl">
             Owambes, meetups and <em className="text-gele-ink">nights out</em>, across Naija.
           </h1>
-          <p className="mt-3 max-w-xl text-lg text-ink-soft">Book your place in a minute. Organisers: collect aso-ebi sizes and guest details without a single spreadsheet.</p>
+          <p className="mt-3 max-w-xl text-lg text-ink-soft">
+            Book your place in a minute. Organisers: collect aso-ebi sizes and guest details without a single spreadsheet.
+          </p>
         </div>
       </section>
 
@@ -56,7 +58,10 @@ export default function Events() {
               {activeCount ? <p>Try another city or date, or fewer filters.</p> : <p>Check back soon, or organise one yourself.</p>}
             </EmptyState>
           ) : (
-            <ul className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ${events.status === 'loading' ? 'opacity-60' : ''}`} aria-busy={events.status === 'loading'}>
+            <ul
+              className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ${events.status === 'loading' ? 'opacity-60' : ''}`}
+              aria-busy={events.status === 'loading'}
+            >
               {events.data.map((e) => (
                 <li key={e.id}>
                   <EventCard event={e} />

@@ -53,7 +53,14 @@ export function WaitlistForm({ event, ticketId = '' }) {
     <form {...form.formProps} className="space-y-4">
       <ErrorSummary form={form} />
       {soldOut.length > 1 && (
-        <SelectField form={form} name="ticketId" label="Which ticket?" options={soldOut.map((t) => ({ id: t.id, label: t.name }))} placeholder="Any ticket" optional />
+        <SelectField
+          form={form}
+          name="ticketId"
+          label="Which ticket?"
+          options={soldOut.map((t) => ({ id: t.id, label: t.name }))}
+          placeholder="Any ticket"
+          optional
+        />
       )}
       <TextField form={form} name="name" label="Full name" autoComplete="name" />
       <TextField form={form} name="email" label="Email" type="email" autoComplete="email" inputMode="email" hint="Give an email, a phone number, or both." />

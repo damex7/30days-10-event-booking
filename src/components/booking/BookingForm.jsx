@@ -102,7 +102,15 @@ export function BookingForm({ form, event, preview = false, banner }) {
             <TextField form={form} name="buyer.name" label="Full name" autoComplete="name" />
             <div className="grid gap-5 sm:grid-cols-2">
               <TextField form={form} name="buyer.email" label="Email" type="email" inputMode="email" autoComplete="email" spellCheck={false} />
-              <TextField form={form} name="buyer.phone" label="Phone" type="tel" inputMode="tel" autoComplete="tel" hint="Like 0803 123 4567 or +234 803 123 4567." />
+              <TextField
+                form={form}
+                name="buyer.phone"
+                label="Phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                hint="Like 0803 123 4567 or +234 803 123 4567."
+              />
             </div>
           </div>
         </Section>
@@ -110,14 +118,24 @@ export function BookingForm({ form, event, preview = false, banner }) {
         {hasBookingQuestions && (
           <Section number={next()} title="A few questions" intro={`From ${event.organiser.name || 'the organiser'}.`}>
             <div className="rounded-2xl border border-line bg-panel p-4 sm:p-5">
-              <QuestionList form={form} questions={event.questions} scope="booking" bookingAnswers={values.answers} basePath="answers" announce={announce} preview={preview} />
+              <QuestionList
+                form={form}
+                questions={event.questions}
+                scope="booking"
+                bookingAnswers={values.answers}
+                basePath="answers"
+                announce={announce}
+                preview={preview}
+              />
             </div>
           </Section>
         )}
 
         <Section number={next()} title="Guests" intro="One set of details for each ticket, so every guest gets their own." headingRef={guestsHeading}>
           {count === 0 ? (
-            <p className="rounded-2xl border border-dashed border-line-strong p-5 text-center text-ink-faint">Choose your tickets above, and a card for each guest appears here.</p>
+            <p className="rounded-2xl border border-dashed border-line-strong p-5 text-center text-ink-faint">
+              Choose your tickets above, and a card for each guest appears here.
+            </p>
           ) : (
             <div className="space-y-4">
               {values.attendees.map((a, i) => (
@@ -154,32 +172,32 @@ export function BookingForm({ form, event, preview = false, banner }) {
       {/* Desktop: the summary follows you down the page. Phones: a bar with the total. Neither in the preview. */}
       {!preview && (
         <>
-      <aside className="hidden lg:block" aria-label="Your order">
-        <div className="foil-edge sticky top-24 rounded-2xl bg-panel p-5 shadow-card">
-          <p className="text-sm font-bold tracking-wide text-gele-ink uppercase">Your order</p>
-          <p className="mt-1 font-display text-xl leading-snug font-semibold">{event.title}</p>
-          <p className="mb-4 text-sm text-ink-soft">{formatEventWhen(event.startsAt, event.endsAt)}</p>
-          <OrderSummary totals={totals} />
-          <Button type="submit" className="mt-5 w-full" disabled={form.isSubmitting}>
-            {form.isSubmitting ? 'Booking…' : submitText}
-          </Button>
-        </div>
-      </aside>
+          <aside className="hidden lg:block" aria-label="Your order">
+            <div className="foil-edge sticky top-24 rounded-2xl bg-panel p-5 shadow-card">
+              <p className="text-sm font-bold tracking-wide text-gele-ink uppercase">Your order</p>
+              <p className="mt-1 font-display text-xl leading-snug font-semibold">{event.title}</p>
+              <p className="mb-4 text-sm text-ink-soft">{formatEventWhen(event.startsAt, event.endsAt)}</p>
+              <OrderSummary totals={totals} />
+              <Button type="submit" className="mt-5 w-full" disabled={form.isSubmitting}>
+                {form.isSubmitting ? 'Booking…' : submitText}
+              </Button>
+            </div>
+          </aside>
 
-      <div
-        data-sticky-bar
-        className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden"
-      >
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-          <div>
-            <p className="text-xs text-ink-faint">{count === 1 ? '1 ticket' : `${count} tickets`}</p>
-            <p className="font-display text-lg font-bold">{totals.totalKobo === 0 ? 'Free' : formatNaira(totals.totalKobo)}</p>
+          <div
+            data-sticky-bar
+            className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden"
+          >
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+              <div>
+                <p className="text-xs text-ink-faint">{count === 1 ? '1 ticket' : `${count} tickets`}</p>
+                <p className="font-display text-lg font-bold">{totals.totalKobo === 0 ? 'Free' : formatNaira(totals.totalKobo)}</p>
+              </div>
+              <Button type="submit" disabled={form.isSubmitting}>
+                {form.isSubmitting ? 'Booking…' : 'Confirm'}
+              </Button>
+            </div>
           </div>
-          <Button type="submit" disabled={form.isSubmitting}>
-            {form.isSubmitting ? 'Booking…' : 'Confirm'}
-          </Button>
-        </div>
-      </div>
         </>
       )}
     </form>

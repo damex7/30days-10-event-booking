@@ -39,7 +39,9 @@ export function blankBookingValues(event) {
 
 /** The guests as they'll be saved: guest 1 takes the buyer's details when "this is me" is ticked. */
 export function effectiveAttendees(values) {
-  return values.attendees.map((a, i) => (i === 0 && values.firstIsBuyer ? { ...a, name: values.buyer.name, email: values.buyer.email, phone: values.buyer.phone } : a))
+  return values.attendees.map((a, i) =>
+    i === 0 && values.firstIsBuyer ? { ...a, name: values.buyer.name, email: values.buyer.email, phone: values.buyer.phone } : a,
+  )
 }
 
 /** The promo definition to price with, if one is applied and still matches the box. */
@@ -68,7 +70,11 @@ export function contactErrors(person = {}, base, { needBoth = false, who = 'your
   collect(
     errors,
     `${p}name`,
-    check(person.name, required(yours ? 'Enter your full name.' : 'Enter this guest’s name, as it should appear on their ticket.'), maxLength(80, 'Keep the name under 80 characters.')),
+    check(
+      person.name,
+      required(yours ? 'Enter your full name.' : 'Enter this guest’s name, as it should appear on their ticket.'),
+      maxLength(80, 'Keep the name under 80 characters.'),
+    ),
   )
   const noEmail = !String(person.email ?? '').trim()
   const noPhone = !String(person.phone ?? '').trim()
@@ -79,7 +85,11 @@ export function contactErrors(person = {}, base, { needBoth = false, who = 'your
     collect(
       errors,
       `${p}email`,
-      noEmail && noPhone ? (yours ? 'Enter an email address or a phone number, so we can reach you.' : 'Enter an email address or a phone number for this guest.') : check(person.email, email()),
+      noEmail && noPhone
+        ? yours
+          ? 'Enter an email address or a phone number, so we can reach you.'
+          : 'Enter an email address or a phone number for this guest.'
+        : check(person.email, email()),
     )
     collect(errors, `${p}phone`, check(person.phone, ngPhone()))
   }
@@ -147,12 +157,15 @@ export function validateBooking(values, event, { today = lagosDateKey() } = {}) 
 
   // Tickets: at least one, within what's left, within the per-person max.
   if (attendees.length === 0) errors.tickets = 'Choose at least one ticket.'
-  else if (attendees.length > event.maxPerBooking) errors.tickets = `You can book up to ${event.maxPerBooking} tickets at a time. Remove ${attendees.length - event.maxPerBooking}.`
+  else if (attendees.length > event.maxPerBooking)
+    errors.tickets = `You can book up to ${event.maxPerBooking} tickets at a time. Remove ${attendees.length - event.maxPerBooking}.`
   for (const t of event.tickets) {
     const n = qty[t.id] ?? 0
     if (n === 0) continue
-    if (!t.onSale) errors.tickets ??= `${t.name} ${t.status === 'soldout' ? 'has just sold out' : 'is no longer on sale'}. Remove ${n === 1 ? 'it' : 'them'} to continue.`
-    else if (n > t.remaining) errors.tickets ??= `Only ${t.remaining} ${t.name} ${t.remaining === 1 ? 'ticket is' : 'tickets are'} left. Choose ${t.remaining} or fewer.`
+    if (!t.onSale)
+      errors.tickets ??= `${t.name} ${t.status === 'soldout' ? 'has just sold out' : 'is no longer on sale'}. Remove ${n === 1 ? 'it' : 'them'} to continue.`
+    else if (n > t.remaining)
+      errors.tickets ??= `Only ${t.remaining} ${t.name} ${t.remaining === 1 ? 'ticket is' : 'tickets are'} left. Choose ${t.remaining} or fewer.`
   }
   for (const ticketId of Object.keys(qty)) {
     if (!event.tickets.some((t) => t.id === ticketId)) errors.tickets ??= 'One of your tickets is no longer offered. Remove it to continue.'
@@ -255,7 +268,14 @@ export function cleanBookingDraft(raw, event) {
       continue
     }
     counts[a.ticketId] = n + 1
-    attendees.push({ id: a.id.slice(0, 40), ticketId: a.ticketId, name: str(a.name, 80), email: str(a.email, 120), phone: str(a.phone, 20), answers: cleanDraftAnswers(a.answers, event.questions) })
+    attendees.push({
+      id: a.id.slice(0, 40),
+      ticketId: a.ticketId,
+      name: str(a.name, 80),
+      email: str(a.email, 120),
+      phone: str(a.phone, 20),
+      answers: cleanDraftAnswers(a.answers, event.questions),
+    })
   }
   return {
     trimmed,

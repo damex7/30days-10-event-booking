@@ -59,8 +59,10 @@ export function QuestionList({ form, questions, scope, bookingAnswers, guestAnsw
     const added = visible.filter((q) => !before.has(q.id))
     const removed = previous.current.filter((q) => !visible.some((v) => v.id === q.id))
     previous.current = visible
-    if (added.length) announce?.(`${added.length === 1 ? 'A new question appeared' : `${added.length} new questions appeared`}: ${added.map((q) => q.label).join(', ')}.`)
-    else if (removed.length) announce?.(`${removed.length === 1 ? 'A question was' : `${removed.length} questions were`} removed: ${removed.map((q) => q.label).join(', ')}.`)
+    if (added.length)
+      announce?.(`${added.length === 1 ? 'A new question appeared' : `${added.length} new questions appeared`}: ${added.map((q) => q.label).join(', ')}.`)
+    else if (removed.length)
+      announce?.(`${removed.length === 1 ? 'A question was' : `${removed.length} questions were`} removed: ${removed.map((q) => q.label).join(', ')}.`)
     // Re-run only when the set of visible questions changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ids])

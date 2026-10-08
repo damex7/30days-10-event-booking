@@ -74,12 +74,14 @@ export const after = (other, message) => (v) => (isBlank(v) || isBlank(other) ||
 export const oneOf = (allowed, message) => (v) => (isBlank(v) || allowed.includes(v) ? undefined : message)
 
 /** Multiple choice: how many may be picked. */
-export const pickBetween = (min, max, { tooFew, tooMany }) => (v) => {
-  const count = Array.isArray(v) ? v.length : 0
-  if (min != null && count > 0 && count < min) return tooFew
-  if (max != null && count > max) return tooMany
-  return undefined
-}
+export const pickBetween =
+  (min, max, { tooFew, tooMany }) =>
+  (v) => {
+    const count = Array.isArray(v) ? v.length : 0
+    if (min != null && count > 0 && count < min) return tooFew
+    if (max != null && count > max) return tooMany
+    return undefined
+  }
 
 /** Add a message to an errors object only if there is one: errors stay { path: message } with no empty keys. */
 export function collect(errors, path, message) {

@@ -132,7 +132,14 @@ export async function getEvents(filters = {}, { signal } = {}) {
 export async function getEvent(slug, { signal } = {}) {
   await respond(signal)
   const db = load()
-  return copy(toPublic(withAvailability(eventOr404(db, (e) => e.slug === slug), db.bookings)))
+  return copy(
+    toPublic(
+      withAvailability(
+        eventOr404(db, (e) => e.slug === slug),
+        db.bookings,
+      ),
+    ),
+  )
 }
 
 /** The organiser's list: every event, past ones included, with availability and booking counts. */
@@ -172,7 +179,10 @@ function checkedEvent(values, ctx, identity) {
 export async function createEvent(values, { signal } = {}) {
   await respond(signal)
   const db = load()
-  const slug = uniqueSlug(slugify(values.title), db.events.map((e) => e.slug))
+  const slug = uniqueSlug(
+    slugify(values.title),
+    db.events.map((e) => e.slug),
+  )
   const event = checkedEvent(values, { isNew: true }, { id: newId('evt'), slug })
   db.events.push(event)
   save(db)
@@ -189,7 +199,11 @@ export async function updateEvent(id, values, { signal } = {}) {
   const db = load()
   const existing = eventOr404(db, (e) => e.id === id)
   const sold = soldByTicket(db.bookings.filter((b) => b.eventId === id))
-  const event = checkedEvent(values, { isNew: false, originalStartsAt: isoToLagosInput(existing.startsAt), sold }, { id, slug: existing.slug, createdAt: existing.createdAt })
+  const event = checkedEvent(
+    values,
+    { isNew: false, originalStartsAt: isoToLagosInput(existing.startsAt), sold },
+    { id, slug: existing.slug, createdAt: existing.createdAt },
+  )
   db.events = db.events.map((e) => (e.id === id ? event : e))
   save(db)
   return copy(event)
@@ -212,7 +226,10 @@ export async function updateEvent(id, values, { signal } = {}) {
 export async function createBooking(eventId, values, { signal } = {}) {
   await respond(signal)
   const db = load()
-  const event = withAvailability(eventOr404(db, (e) => e.id === eventId), db.bookings)
+  const event = withAvailability(
+    eventOr404(db, (e) => e.id === eventId),
+    db.bookings,
+  )
   const errors = validateBooking({ ...values, promo: null }, event)
   // Re-check the promo ourselves instead of trusting values.promo.
   const code = normaliseCode(values.promoCode)
@@ -303,7 +320,8 @@ export async function checkPromo(eventId, code, subtotalKobo, { signal } = {}) {
   await respond(signal)
   const event = eventOr404(load(), (e) => e.id === eventId)
   const promo = findPromo(event, code)
-  if (!promo) throw new ApiError('PROMO_INVALID', `“${normaliseCode(code)}” isn’t a valid code for this event. Check the spelling, or clear the box to continue.`)
+  if (!promo)
+    throw new ApiError('PROMO_INVALID', `“${normaliseCode(code)}” isn’t a valid code for this event. Check the spelling, or clear the box to continue.`)
   if (subtotalKobo === 0) throw new ApiError('PROMO_INVALID', 'Your tickets are free, so there’s nothing to discount. Clear the box to continue.')
   // Once applied, the kind and value are the guest's to know, so the total can update as they change tickets.
   return { code: promo.code, kind: promo.kind, value: promo.value, label: describePromo(promo), discountKobo: promoDiscount(promo, subtotalKobo) }

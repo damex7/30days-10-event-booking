@@ -81,7 +81,13 @@ export function eventToForm(event) {
       quantity: String(t.quantity),
       salesEndAt: t.salesEndAt ? isoToLagosInput(t.salesEndAt) : '',
     })),
-    questions: event.questions.map((q) => ({ ...q, options: q.options.map((o) => ({ ...o })), min: numText(q.min), max: numText(q.max), showIf: q.showIf ? { ...q.showIf, anyOf: [...q.showIf.anyOf] } : null })),
+    questions: event.questions.map((q) => ({
+      ...q,
+      options: q.options.map((o) => ({ ...o })),
+      min: numText(q.min),
+      max: numText(q.max),
+      showIf: q.showIf ? { ...q.showIf, anyOf: [...q.showIf.anyOf] } : null,
+    })),
     promoCodes: event.promoCodes.map((p) => ({ code: p.code, kind: p.kind, value: String(p.kind === 'fixed' ? koboToWholeNaira(p.value) : p.value) })),
   }
 }
@@ -163,9 +169,11 @@ export function conditionProblem(questions, index) {
   const name = parent.label.trim() || `Question ${parentIndex + 1}`
   if (parentIndex > index) return `This depends on “${name}”, which now comes after it. Move it below “${name}”.`
   if (!canBeCondition(parent)) return `“${name}” is no longer a choice or yes/no question, so it can’t control this one.`
-  if (parent.perAttendee && !q.perAttendee) return `“${name}” is asked for each guest, so a once-per-booking question can’t depend on it. Ask this one for each guest too.`
+  if (parent.perAttendee && !q.perAttendee)
+    return `“${name}” is asked for each guest, so a once-per-booking question can’t depend on it. Ask this one for each guest too.`
   if (q.showIf.anyOf.length === 0) return `Tick at least one answer to “${name}” that shows this question.`
-  if (q.showIf.anyOf.some((v) => !choicesOf(parent).some((o) => o.id === v))) return `One of the answers this depends on was removed from “${name}”. Tick the answers again.`
+  if (q.showIf.anyOf.some((v) => !choicesOf(parent).some((o) => o.id === v)))
+    return `One of the answers this depends on was removed from “${name}”. Tick the answers again.`
   return null
 }
 
@@ -173,13 +181,46 @@ export function conditionProblem(questions, index) {
 
 function detailsErrors(v) {
   const e = {}
-  collect(e, 'title', check(v.title, required('Give your event a name.'), minLength(4, 'Use at least 4 characters, e.g. “Ada’s 30th”.'), maxLength(100, 'Keep the name under 100 characters.')))
+  collect(
+    e,
+    'title',
+    check(
+      v.title,
+      required('Give your event a name.'),
+      minLength(4, 'Use at least 4 characters, e.g. “Ada’s 30th”.'),
+      maxLength(100, 'Keep the name under 100 characters.'),
+    ),
+  )
   collect(e, 'summary', check(v.summary, maxLength(160, 'Keep the summary under 160 characters: it’s shown on the event card.')))
-  collect(e, 'description', check(v.description, required('Describe your event, so guests know what to expect.'), minLength(20, 'Add a little more: at least 20 characters.'), maxLength(4000, 'Keep the description under 4,000 characters.')))
-  collect(e, 'category', check(v.category, required('Choose a category.'), oneOf(CATEGORIES.map((c) => c.id), 'Choose one of the categories.')))
+  collect(
+    e,
+    'description',
+    check(
+      v.description,
+      required('Describe your event, so guests know what to expect.'),
+      minLength(20, 'Add a little more: at least 20 characters.'),
+      maxLength(4000, 'Keep the description under 4,000 characters.'),
+    ),
+  )
+  collect(
+    e,
+    'category',
+    check(
+      v.category,
+      required('Choose a category.'),
+      oneOf(
+        CATEGORIES.map((c) => c.id),
+        'Choose one of the categories.',
+      ),
+    ),
+  )
   collect(e, 'cover.pattern', check(v.cover.pattern, oneOf(COVER_PATTERNS, 'Choose a pattern.')))
   collect(e, 'cover.tone', check(v.cover.tone, oneOf(COVER_TONES, 'Choose a colour.')))
-  collect(e, 'organiser.name', check(v.organiser.name, required('Enter the organiser’s name, as guests should see it.'), maxLength(80, 'Keep the name under 80 characters.')))
+  collect(
+    e,
+    'organiser.name',
+    check(v.organiser.name, required('Enter the organiser’s name, as guests should see it.'), maxLength(80, 'Keep the name under 80 characters.')),
+  )
   collect(e, 'organiser.email', check(v.organiser.email, required('Enter an email guests can contact.'), email()))
   collect(e, 'organiser.phone', check(v.organiser.phone, ngPhone()))
   return e
@@ -190,7 +231,15 @@ function whenErrors(v, ctx) {
   const nowLocal = isoToLagosInput((ctx.now ?? new Date()).toISOString())
   // Only a NEW start time must be in the future: editing the venue of an event that started yesterday is fine.
   const startChanged = ctx.isNew || v.startsAt !== ctx.originalStartsAt
-  collect(e, 'startsAt', check(v.startsAt, required('Enter the date and time the event starts.'), startChanged && notBefore(nowLocal, 'The start can’t be in the past. Choose a later date or time.')))
+  collect(
+    e,
+    'startsAt',
+    check(
+      v.startsAt,
+      required('Enter the date and time the event starts.'),
+      startChanged && notBefore(nowLocal, 'The start can’t be in the past. Choose a later date or time.'),
+    ),
+  )
   collect(
     e,
     'endsAt',
@@ -198,11 +247,22 @@ function whenErrors(v, ctx) {
       v.endsAt,
       required('Enter the date and time the event ends.'),
       after(v.startsAt, 'The end must be after the start. Check the date as well as the time.'),
-      (end) => (v.startsAt && end && Date.parse(lagosInputToISO(end)) - Date.parse(lagosInputToISO(v.startsAt)) > 14 * 86_400_000 ? 'An event can last up to 14 days.' : undefined),
+      (end) =>
+        v.startsAt && end && Date.parse(lagosInputToISO(end)) - Date.parse(lagosInputToISO(v.startsAt)) > 14 * 86_400_000
+          ? 'An event can last up to 14 days.'
+          : undefined,
     ),
   )
-  collect(e, 'venue.name', check(v.venue.name, required('Enter the venue’s name, e.g. “Ocean Pearl Event Hall”.'), maxLength(100, 'Keep the venue name under 100 characters.')))
-  collect(e, 'venue.address', check(v.venue.address, required('Enter the address, so guests can find it.'), maxLength(200, 'Keep the address under 200 characters.')))
+  collect(
+    e,
+    'venue.name',
+    check(v.venue.name, required('Enter the venue’s name, e.g. “Ocean Pearl Event Hall”.'), maxLength(100, 'Keep the venue name under 100 characters.')),
+  )
+  collect(
+    e,
+    'venue.address',
+    check(v.venue.address, required('Enter the address, so guests can find it.'), maxLength(200, 'Keep the address under 200 characters.')),
+  )
   collect(e, 'venue.city', check(v.venue.city, required('Choose the city.'), oneOf(CITIES, 'Choose one of the cities.')))
   return e
 }
@@ -210,7 +270,16 @@ function whenErrors(v, ctx) {
 function ticketErrors(v, ctx) {
   const e = {}
   const sold = ctx.sold ?? {}
-  collect(e, 'maxPerBooking', check(v.maxPerBooking, required('Enter how many tickets one person may book.'), integer(), between(1, LIMITS.maxPerBooking, `Enter a number from 1 to ${LIMITS.maxPerBooking}.`)))
+  collect(
+    e,
+    'maxPerBooking',
+    check(
+      v.maxPerBooking,
+      required('Enter how many tickets one person may book.'),
+      integer(),
+      between(1, LIMITS.maxPerBooking, `Enter a number from 1 to ${LIMITS.maxPerBooking}.`),
+    ),
+  )
   if (v.tickets.length === 0) e.tickets = 'Add at least one ticket type.'
   if (v.tickets.length > LIMITS.ticketTypes) e.tickets = `You can have up to ${LIMITS.ticketTypes} ticket types.`
   const names = v.tickets.map((t) => t.name.trim().toLowerCase())
@@ -224,7 +293,16 @@ function ticketErrors(v, ctx) {
         names.indexOf(n.trim().toLowerCase()) !== i ? 'Another ticket has this name. Give each ticket its own name.' : undefined,
       ),
     )
-    collect(e, `${p}.price`, check(t.price, required('Enter a price. Use 0 for a free ticket.'), integer('Enter the price in whole naira, like 5000.'), between(0, LIMITS.priceNaira, 'Enter a price from ₦0 to ₦10,000,000.')))
+    collect(
+      e,
+      `${p}.price`,
+      check(
+        t.price,
+        required('Enter a price. Use 0 for a free ticket.'),
+        integer('Enter the price in whole naira, like 5000.'),
+        between(0, LIMITS.priceNaira, 'Enter a price from ₦0 to ₦10,000,000.'),
+      ),
+    )
     collect(
       e,
       `${p}.quantity`,
@@ -236,7 +314,11 @@ function ticketErrors(v, ctx) {
         between(taken, null, `${taken} of these are already booked, so the quantity can’t be lower than ${taken}.`),
       ),
     )
-    collect(e, `${p}.salesEndAt`, check(t.salesEndAt, (end) => (v.endsAt && end && end >= v.endsAt ? 'Sales must end before the event ends.' : undefined)))
+    collect(
+      e,
+      `${p}.salesEndAt`,
+      check(t.salesEndAt, (end) => (v.endsAt && end && end >= v.endsAt ? 'Sales must end before the event ends.' : undefined)),
+    )
     collect(e, `${p}.description`, check(t.description, maxLength(200, 'Keep the description under 200 characters.')))
   })
   // Tickets that people have booked can't vanish (their bookings would point at nothing).
@@ -249,8 +331,11 @@ function ticketErrors(v, ctx) {
     collect(
       e,
       `${p}.code`,
-      check(c.code, required('Enter the code guests will type.'), (x) => (/^[A-Za-z0-9]{3,20}$/.test(x.trim()) ? undefined : 'Use 3 to 20 letters and numbers, with no spaces.'), (x) =>
-        codes.indexOf(x.trim().toUpperCase()) !== i ? 'This code is listed twice.' : undefined,
+      check(
+        c.code,
+        required('Enter the code guests will type.'),
+        (x) => (/^[A-Za-z0-9]{3,20}$/.test(x.trim()) ? undefined : 'Use 3 to 20 letters and numbers, with no spaces.'),
+        (x) => (codes.indexOf(x.trim().toUpperCase()) !== i ? 'This code is listed twice.' : undefined),
       ),
     )
     collect(
@@ -258,7 +343,12 @@ function ticketErrors(v, ctx) {
       `${p}.value`,
       c.kind === 'percent'
         ? check(c.value, required('Enter the percentage off.'), integer(), between(1, 100, 'Enter a percentage from 1 to 100.'))
-        : check(c.value, required('Enter the amount off, in naira.'), integer('Enter whole naira, like 2000.'), between(1, LIMITS.priceNaira, 'Enter an amount of at least ₦1.')),
+        : check(
+            c.value,
+            required('Enter the amount off, in naira.'),
+            integer('Enter whole naira, like 2000.'),
+            between(1, LIMITS.priceNaira, 'Enter an amount of at least ₦1.'),
+          ),
     )
   })
   return e
@@ -269,7 +359,11 @@ function questionErrors(v) {
   if (v.questions.length > LIMITS.questions) e.questions = `You can ask up to ${LIMITS.questions} questions.`
   v.questions.forEach((q, i) => {
     const p = `questions.${i}`
-    collect(e, `${p}.label`, check(q.label, required('Write the question, e.g. “What’s your aso-ebi size?”.'), maxLength(120, 'Keep the question under 120 characters.')))
+    collect(
+      e,
+      `${p}.label`,
+      check(q.label, required('Write the question, e.g. “What’s your aso-ebi size?”.'), maxLength(120, 'Keep the question under 120 characters.')),
+    )
     collect(e, `${p}.hint`, check(q.hint, maxLength(200, 'Keep the hint under 200 characters.')))
     collect(e, `${p}.type`, check(q.type, oneOf(QUESTION_TYPE_IDS, 'Choose a question type.')))
     if (hasOptions(q)) {
@@ -288,7 +382,13 @@ function questionErrors(v) {
     }
     if (q.type === 'number') {
       collect(e, `${p}.min`, check(q.min, integer()))
-      collect(e, `${p}.max`, check(q.max, integer(), (mx) => (int(q.min) != null && int(mx) != null && int(mx) < int(q.min) ? 'The highest number must be at least the lowest.' : undefined)))
+      collect(
+        e,
+        `${p}.max`,
+        check(q.max, integer(), (mx) =>
+          int(q.min) != null && int(mx) != null && int(mx) < int(q.min) ? 'The highest number must be at least the lowest.' : undefined,
+        ),
+      )
     }
     if (q.type === 'multi') {
       collect(e, `${p}.max`, check(q.max, integer(), between(1, q.options.length, `Enter a number from 1 to ${q.options.length} (the number of options).`)))
@@ -324,8 +424,22 @@ export function asoEbiTemplate() {
   const when = { questionId: want.id, anyOf: ['yes'] }
   return [
     want,
-    { ...blankQuestion('single'), label: 'Aso-ebi colour', required: true, perAttendee: true, options: [blankOption('Gold'), blankOption('Wine')], showIf: { ...when } },
-    { ...blankQuestion('single'), label: 'Head piece', required: true, perAttendee: true, options: [blankOption('Gele'), blankOption('Fila (cap)'), blankOption('No head piece')], showIf: { ...when } },
+    {
+      ...blankQuestion('single'),
+      label: 'Aso-ebi colour',
+      required: true,
+      perAttendee: true,
+      options: [blankOption('Gold'), blankOption('Wine')],
+      showIf: { ...when },
+    },
+    {
+      ...blankQuestion('single'),
+      label: 'Head piece',
+      required: true,
+      perAttendee: true,
+      options: [blankOption('Gele'), blankOption('Fila (cap)'), blankOption('No head piece')],
+      showIf: { ...when },
+    },
     {
       ...blankQuestion('single'),
       label: 'Size',
@@ -355,7 +469,8 @@ function conform(raw, template) {
   return template
 }
 
-const conformList = (raw, make) => (Array.isArray(raw) ? raw.slice(0, 30).filter((x) => x && typeof x === 'object' && typeof x.id === 'string') : []).map((x) => conform(x, make(x)))
+const conformList = (raw, make) =>
+  (Array.isArray(raw) ? raw.slice(0, 30).filter((x) => x && typeof x === 'object' && typeof x.id === 'string') : []).map((x) => conform(x, make(x)))
 
 export function cleanEditorDraft(raw) {
   if (!raw || typeof raw !== 'object') return null
@@ -370,10 +485,15 @@ export function cleanEditorDraft(raw) {
         ...q,
         type: QUESTION_TYPE_IDS.includes(q.type) ? q.type : 'short',
         options: conformList(src.options, (o) => ({ ...blankOption(), id: o.id })),
-        showIf: src.showIf && typeof src.showIf.questionId === 'string' ? { questionId: src.showIf.questionId, anyOf: (src.showIf.anyOf ?? []).filter((v) => typeof v === 'string') } : null,
+        showIf:
+          src.showIf && typeof src.showIf.questionId === 'string'
+            ? { questionId: src.showIf.questionId, anyOf: (src.showIf.anyOf ?? []).filter((v) => typeof v === 'string') }
+            : null,
       }
     }),
-    promoCodes: (Array.isArray(raw.promoCodes) ? raw.promoCodes : []).map((p) => conform(p, { ...promoCodes[0], code: '', kind: 'percent', value: '' })).map((p) => ({ ...p, kind: p.kind === 'fixed' ? 'fixed' : 'percent' })),
+    promoCodes: (Array.isArray(raw.promoCodes) ? raw.promoCodes : [])
+      .map((p) => conform(p, { ...promoCodes[0], code: '', kind: 'percent', value: '' }))
+      .map((p) => ({ ...p, kind: p.kind === 'fixed' ? 'fixed' : 'percent' })),
   }
 }
 

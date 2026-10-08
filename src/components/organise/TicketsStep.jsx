@@ -70,7 +70,9 @@ export function TicketsStep({ form, sold, announce }) {
                         count={tickets.length}
                         onMove={move}
                         onRemove={remove}
-                        removeDisabledReason={booked > 0 ? `${booked} booked: this ticket can’t be removed` : tickets.length === 1 ? 'An event needs at least one ticket' : ''}
+                        removeDisabledReason={
+                          booked > 0 ? `${booked} booked: this ticket can’t be removed` : tickets.length === 1 ? 'An event needs at least one ticket' : ''
+                        }
                       />
                     </div>
                     <div className="grid gap-5 sm:grid-cols-2">
@@ -80,7 +82,13 @@ export function TicketsStep({ form, sold, announce }) {
                         <NumberField form={form} name={`tickets.${i}.quantity`} label="Quantity" hint={booked ? `At least ${booked}.` : 'How many.'} />
                       </div>
                       <TextField form={form} name={`tickets.${i}.description`} label="What’s included" optional className="sm:col-span-2" />
-                      <DateTimeField form={form} name={`tickets.${i}.salesEndAt`} label="Sales end" optional hint="Lagos time. Leave empty to sell until the event starts." />
+                      <DateTimeField
+                        form={form}
+                        name={`tickets.${i}.salesEndAt`}
+                        label="Sales end"
+                        optional
+                        hint="Lagos time. Leave empty to sell until the event starts."
+                      />
                     </div>
                   </FieldScope>
                 </li>
@@ -95,7 +103,12 @@ export function TicketsStep({ form, sold, announce }) {
       </Button>
 
       <div className="rounded-2xl border border-line bg-panel p-4 sm:p-5">
-        <NumberField form={form} name="maxPerBooking" label="Most tickets per booking" hint={`How many tickets one person can book at once (1 to ${LIMITS.maxPerBooking}).`} />
+        <NumberField
+          form={form}
+          name="maxPerBooking"
+          label="Most tickets per booking"
+          hint={`How many tickets one person can book at once (1 to ${LIMITS.maxPerBooking}).`}
+        />
       </div>
 
       <section aria-labelledby="promo-h" className="space-y-4">

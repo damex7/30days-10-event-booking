@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Dark mode follows <html data-theme="dark">, set by index.html and useTheme */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -52,9 +52,9 @@
 
   --color-focus: #8f1150;
 
-  --font-sans: "Commissioner", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Noto Serif Display", Georgia, ui-serif, serif;
-  --font-mono: "Chivo Mono", ui-monospace, Consolas, monospace;
+  --font-sans: 'Commissioner', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Noto Serif Display', Georgia, ui-serif, serif;
+  --font-mono: 'Chivo Mono', ui-monospace, Consolas, monospace;
 
   --shadow-card: 0 1px 0 rgb(42 21 32 / 0.05), 0 12px 28px -16px rgb(42 21 32 / 0.35);
   --shadow-pop: 0 24px 50px -14px rgb(42 21 32 / 0.45);
@@ -84,7 +84,7 @@
 }
 
 /* Dark: the same token names with night values, so components never change. */
-[data-theme="dark"] {
+[data-theme='dark'] {
   --color-paper: #160a11;
   --color-panel: #211019;
   --color-panel-2: #2d1824;
@@ -182,7 +182,7 @@
     border-radius: 6px;
   }
   /* Headings that receive focus programmatically (page changes) shouldn't show a ring. */
-  [tabindex="-1"]:focus:not(:focus-visible) {
+  [tabindex='-1']:focus:not(:focus-visible) {
     outline: none;
   }
   /* Anything we scroll or focus into view clears the sticky header. */
@@ -194,7 +194,7 @@
     color: var(--color-on-gold);
   }
   button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]) {
+  [role='button']:not([aria-disabled='true']) {
     cursor: pointer;
   }
   html:has(dialog[open]) {
@@ -205,8 +205,8 @@
     backdrop-filter: blur(2px);
   }
   /* Native checkboxes, radios and date pickers pick up the brand colour. */
-  input[type="checkbox"],
-  input[type="radio"] {
+  input[type='checkbox'],
+  input[type='radio'] {
     accent-color: var(--color-gele);
   }
 }
@@ -228,7 +228,7 @@
 */
 @media print {
   :root,
-  [data-theme="dark"] {
+  [data-theme='dark'] {
     --color-paper: #ffffff;
     --color-panel: #ffffff;
     --color-ink: #000000;

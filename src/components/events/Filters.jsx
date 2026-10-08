@@ -94,13 +94,7 @@ export function Filters({ filters, setFilter, clearAll, activeCount }) {
             />
           </div>
         </div>
-        <Button
-          variant="outline"
-          className="h-12 md:hidden"
-          aria-expanded={open}
-          aria-controls={`${ids}panel`}
-          onClick={() => setOpen((o) => !o)}
-        >
+        <Button variant="outline" className="h-12 md:hidden" aria-expanded={open} aria-controls={`${ids}panel`} onClick={() => setOpen((o) => !o)}>
           <Icon name="filter" className="size-4" />
           Filters{filterCount > 0 && ` (${filterCount})`}
         </Button>

@@ -61,7 +61,11 @@ function Tickets({ event }) {
           {soldOutTypes.length > 0 && waitFor == null && (
             <p className="mt-3 text-center text-sm">
               {soldOutTypes.map((t) => t.name).join(' and ')} {soldOutTypes.length === 1 ? 'is' : 'are'} sold out.{' '}
-              <button type="button" className="font-bold text-gele-ink underline underline-offset-2" onClick={() => setWaitFor(soldOutTypes.length === 1 ? soldOutTypes[0].id : '')}>
+              <button
+                type="button"
+                className="font-bold text-gele-ink underline underline-offset-2"
+                onClick={() => setWaitFor(soldOutTypes.length === 1 ? soldOutTypes[0].id : '')}
+              >
                 Join the waitlist
               </button>
             </p>
@@ -73,7 +77,9 @@ function Tickets({ event }) {
           <p className="text-sm text-ink-soft">Every place has gone. Join the waitlist and we’ll tell you if one opens up.</p>
         </div>
       ) : (
-        <p className="mt-2 rounded-xl bg-panel-2 p-3 text-center font-bold text-ink-soft">{event.isPast ? 'This event has ended.' : 'Booking has closed for this event.'}</p>
+        <p className="mt-2 rounded-xl bg-panel-2 p-3 text-center font-bold text-ink-soft">
+          {event.isPast ? 'This event has ended.' : 'Booking has closed for this event.'}
+        </p>
       )}
 
       {(event.soldOut || waitFor != null) && (
@@ -217,7 +223,10 @@ export default function EventPage() {
 
       {/* Phones: Book stays in reach at the bottom of the screen. */}
       {event.bookable && (
-        <div data-sticky-bar className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
+        <div
+          data-sticky-bar
+          className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden"
+        >
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>
               <p className="text-xs text-ink-faint">Tickets</p>
@@ -232,4 +241,3 @@ export default function EventPage() {
     </article>
   )
 }
-

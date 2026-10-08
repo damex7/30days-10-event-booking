@@ -26,7 +26,9 @@ function ScopeChoice({ form, path }) {
   const value = form.get(path)
   const name = form.idFor(path)
   const option = (checked, label, hint) => (
-    <label className={cx('flex cursor-pointer items-start gap-3 rounded-xl border p-3', value === checked ? 'border-gele bg-gele-soft/60' : 'border-line-strong')}>
+    <label
+      className={cx('flex cursor-pointer items-start gap-3 rounded-xl border p-3', value === checked ? 'border-gele bg-gele-soft/60' : 'border-line-strong')}
+    >
       <input type="radio" name={name} checked={value === checked} onChange={() => form.setValue(path, checked)} className="mt-0.5 size-5 shrink-0" />
       <span>
         <span className="font-semibold">{label}</span>
@@ -60,7 +62,9 @@ function ConditionEditor({ form, index }) {
       <CheckboxField
         id={toggleId}
         label="Only show this question when an earlier answer matches"
-        hint={sources.length ? 'For example, show “Size” only when “Do you want aso-ebi?” is Yes.' : 'Add a yes/no or choice question above this one to use this.'}
+        hint={
+          sources.length ? 'For example, show “Size” only when “Do you want aso-ebi?” is Yes.' : 'Add a yes/no or choice question above this one to use this.'
+        }
         checked={Boolean(q.showIf)}
         disabled={!q.showIf && sources.length === 0}
         onChange={(on) => form.setValue(`${path}.showIf`, on ? { questionId: sources.at(-1)?.id ?? '', anyOf: [] } : null)}
@@ -73,7 +77,12 @@ function ConditionEditor({ form, index }) {
                 <label htmlFor={selectId} className={labelClass}>
                   Show when the answer to…
                 </label>
-                <select id={selectId} value={q.showIf.questionId} onChange={(e) => form.setValue(`${path}.showIf`, { questionId: e.target.value, anyOf: [] })} className={selectClass(false)}>
+                <select
+                  id={selectId}
+                  value={q.showIf.questionId}
+                  onChange={(e) => form.setValue(`${path}.showIf`, { questionId: e.target.value, anyOf: [] })}
+                  className={selectClass(false)}
+                >
                   <option value="">Choose a question…</option>
                   {/* Keep a now-invalid parent listed, so the select shows what's actually saved. */}
                   {(parent && !sources.includes(parent) ? [parent, ...sources] : sources).map((s) => (
@@ -90,7 +99,10 @@ function ConditionEditor({ form, index }) {
                     {choicesOf(parent).map((o) => {
                       const checked = q.showIf.anyOf.includes(o.id)
                       return (
-                        <label key={o.id} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line-strong bg-panel px-4 has-checked:border-gele has-checked:bg-gele-soft">
+                        <label
+                          key={o.id}
+                          className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line-strong bg-panel px-4 has-checked:border-gele has-checked:bg-gele-soft"
+                        >
                           <input
                             type="checkbox"
                             checked={checked}
@@ -146,7 +158,14 @@ function OptionsEditor({ form, index, announce }) {
               <li key={o.id} className="flex items-end gap-2">
                 <TextField form={form} name={`${path}.${j}.label`} label={`Option ${j + 1}`} className="flex-1" />
                 <div className="pb-1">
-                  <ListItemActions idBase={`mv-${o.id}`} name={`option ${j + 1}`} index={j} count={q.options.length} onMove={move} onRemove={q.options.length > 2 ? remove : null} />
+                  <ListItemActions
+                    idBase={`mv-${o.id}`}
+                    name={`option ${j + 1}`}
+                    index={j}
+                    count={q.options.length}
+                    onMove={move}
+                    onRemove={q.options.length > 2 ? remove : null}
+                  />
                 </div>
               </li>
             ))}
@@ -174,7 +193,14 @@ function QuestionCard({ form, index, open, onToggle, onMove, onDelete, announce 
     form.setValues((v) => ({
       ...v,
       questions: v.questions.map((x, i) =>
-        i === index ? { ...x, type, options: hasOptions({ type }) && x.options.length < 2 ? [...x.options, blankOption(), blankOption()].slice(0, Math.max(2, x.options.length)) : x.options } : x,
+        i === index
+          ? {
+              ...x,
+              type,
+              options:
+                hasOptions({ type }) && x.options.length < 2 ? [...x.options, blankOption(), blankOption()].slice(0, Math.max(2, x.options.length)) : x.options,
+            }
+          : x,
       ),
     }))
 
@@ -239,10 +265,21 @@ function QuestionCard({ form, index, open, onToggle, onMove, onDelete, announce 
             )}
             {q.type === 'multi' && <NumberField form={form} name={`${path}.max`} label="Most answers a guest can tick" optional />}
             {q.type === 'date' && (
-              <CheckboxField id={form.idFor(`${path}.notInPast`)} label="Don’t allow dates in the past" checked={q.notInPast} onChange={(c) => form.setValue(`${path}.notInPast`, c)} />
+              <CheckboxField
+                id={form.idFor(`${path}.notInPast`)}
+                label="Don’t allow dates in the past"
+                checked={q.notInPast}
+                onChange={(c) => form.setValue(`${path}.notInPast`, c)}
+              />
             )}
 
-            <CheckboxField id={form.idFor(`${path}.required`)} label="Guests must answer this" hint="When it’s shown. A hidden question is never required." checked={q.required} onChange={(c) => form.setValue(`${path}.required`, c)} />
+            <CheckboxField
+              id={form.idFor(`${path}.required`)}
+              label="Guests must answer this"
+              hint="When it’s shown. A hidden question is never required."
+              checked={q.required}
+              onChange={(c) => form.setValue(`${path}.required`, c)}
+            />
             <ScopeChoice form={form} path={`${path}.perAttendee`} />
             <ConditionEditor form={form} index={index} />
           </div>
@@ -291,7 +328,9 @@ export function QuestionsStep({ form, announce }) {
       questions: v.questions.filter((_, i) => i !== index).map((q) => (q.showIf?.questionId === id ? { ...q, showIf: null } : q)),
     }))
     form.forget((p) => p.startsWith('questions.'))
-    announce(`Question removed.${dependents.length ? ` ${dependents.length} question${dependents.length === 1 ? '' : 's'} that depended on it will now always show.` : ''}`)
+    announce(
+      `Question removed.${dependents.length ? ` ${dependents.length} question${dependents.length === 1 ? '' : 's'} that depended on it will now always show.` : ''}`,
+    )
     setDeleting(null)
     requestAnimationFrame(() => document.getElementById('add-question')?.focus())
   }
@@ -301,12 +340,14 @@ export function QuestionsStep({ form, announce }) {
   return (
     <div className="space-y-6">
       <p className="text-ink-soft">
-        Ask guests anything you’d otherwise chase on WhatsApp. Name, email and phone are already asked for every guest. Use “Only show when…” for follow-ups, like sizes only for
-        people who want aso-ebi. The preview shows the form exactly as guests will see it.
+        Ask guests anything you’d otherwise chase on WhatsApp. Name, email and phone are already asked for every guest. Use “Only show when…” for follow-ups,
+        like sizes only for people who want aso-ebi. The preview shows the form exactly as guests will see it.
       </p>
 
       {questions.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-line-strong p-6 text-center text-ink-faint">No questions yet. Guests will only be asked for their contact details.</p>
+        <p className="rounded-2xl border border-dashed border-line-strong p-6 text-center text-ink-faint">
+          No questions yet. Guests will only be asked for their contact details.
+        </p>
       ) : (
         <ol className="space-y-3">
           {questions.map((q, i) => (
@@ -346,8 +387,8 @@ export function QuestionsStep({ form, announce }) {
       >
         {dependents.length > 0 && (
           <p>
-            {dependents.map((d) => `“${d.label || 'Untitled'}”`).join(' and ')} {dependents.length === 1 ? 'is' : 'are'} only shown depending on this answer. If you delete it,{' '}
-            {dependents.length === 1 ? 'that question' : 'they'} will always be shown.
+            {dependents.map((d) => `“${d.label || 'Untitled'}”`).join(' and ')} {dependents.length === 1 ? 'is' : 'are'} only shown depending on this answer. If
+            you delete it, {dependents.length === 1 ? 'that question' : 'they'} will always be shown.
           </p>
         )}
       </ConfirmDialog>

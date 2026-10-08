@@ -21,7 +21,12 @@ export function AvailabilityBadge({ event }) {
   if (!event.bookable) return <Badge>Booking closed</Badge>
   if (event.remaining <= 10) return <Badge tone="gold">Only {event.remaining} left</Badge>
   const few = event.tickets.find((t) => t.status === 'few')
-  if (few) return <Badge tone="gold">{few.name}: {few.remaining} left</Badge>
+  if (few)
+    return (
+      <Badge tone="gold">
+        {few.name}: {few.remaining} left
+      </Badge>
+    )
   return null
 }
 

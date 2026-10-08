@@ -114,7 +114,15 @@ function OptionRow({ type, name, checked, onChange, option, invalid }) {
         invalid ? 'border-danger' : 'border-line-strong',
       )}
     >
-      <input type={type} name={name} checked={checked} onChange={onChange} disabled={option.disabled} aria-invalid={invalid || undefined} className="mt-0.5 size-5 shrink-0" />
+      <input
+        type={type}
+        name={name}
+        checked={checked}
+        onChange={onChange}
+        disabled={option.disabled}
+        aria-invalid={invalid || undefined}
+        className="mt-0.5 size-5 shrink-0"
+      />
       <span>
         <span className="font-semibold">{option.label}</span>
         {option.hint && <span className="block text-sm text-ink-faint">{option.hint}</span>}
@@ -148,7 +156,15 @@ export function RadioGroupField({ form, name, label, hint, optional, className, 
                 {o.label}
               </label>
             ) : (
-              <OptionRow key={o.id} type="radio" name={groupName} checked={value === o.id} onChange={() => form.setValue(name, o.id)} option={o} invalid={a11y['aria-invalid']} />
+              <OptionRow
+                key={o.id}
+                type="radio"
+                name={groupName}
+                checked={value === o.id}
+                onChange={() => form.setValue(name, o.id)}
+                option={o}
+                invalid={a11y['aria-invalid']}
+              />
             ),
           )}
         </div>
@@ -176,7 +192,15 @@ export function CheckboxGroupField({ form, name, label, hint, optional, classNam
       {(a11y) => (
         <div className="grid gap-2 sm:grid-cols-2">
           {options.map((o) => (
-            <OptionRow key={o.id} type="checkbox" name={`${form.idFor(name)}-cb`} checked={value.includes(o.id)} onChange={() => toggle(o.id)} option={o} invalid={a11y['aria-invalid']} />
+            <OptionRow
+              key={o.id}
+              type="checkbox"
+              name={`${form.idFor(name)}-cb`}
+              checked={value.includes(o.id)}
+              onChange={() => toggle(o.id)}
+              option={o}
+              invalid={a11y['aria-invalid']}
+            />
           ))}
         </div>
       )}
@@ -188,7 +212,15 @@ export function CheckboxGroupField({ form, name, label, hint, optional, classNam
 export function CheckboxField({ id, label, hint, checked, onChange, className, disabled }) {
   return (
     <div className={cx('flex items-start gap-3', className)}>
-      <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} disabled={disabled} className="mt-0.5 size-5 shrink-0" aria-describedby={hint ? `${id}-hint` : undefined} />
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
+        className="mt-0.5 size-5 shrink-0"
+        aria-describedby={hint ? `${id}-hint` : undefined}
+      />
       <div>
         <label htmlFor={id} className="cursor-pointer font-semibold">
           {label}
