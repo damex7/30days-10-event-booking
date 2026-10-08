@@ -147,6 +147,15 @@
   color: var(--color-on-band);
 }
 
+/* A <select> with our own chevron, tinted to match the input border. */
+@utility select-chevron {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c7480' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-size: 1.25rem;
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+}
+
 /* The gold double rule along the edge of an invitation card. */
 @utility foil-edge {
   border: 1px solid var(--color-gold);
