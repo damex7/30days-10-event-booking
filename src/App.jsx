@@ -1,9 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './components/layout/Layout.jsx'
 import Book from './pages/Book.jsx'
+import Confirmation from './pages/Confirmation.jsx'
 import EventPage from './pages/EventPage.jsx'
 import Events from './pages/Events.jsx'
 import NotFound from './pages/NotFound.jsx'
+import PrintTicket from './pages/PrintTicket.jsx'
 
 /*
   A "data router" (createBrowserRouter) rather than <BrowserRouter>. We
@@ -17,6 +19,8 @@ export const router = createBrowserRouter([
       { path: '/', element: <Events /> },
       { path: '/events/:slug', element: <EventPage /> },
       { path: '/events/:slug/book', element: <Book /> },
+      { path: '/bookings/:reference', element: <Confirmation /> },
+      { path: '/bookings/:reference/ticket', element: <PrintTicket /> },
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -123,6 +123,14 @@ export function formatAnswer(q, value) {
   return String(value)
 }
 
+/** Answered questions as { id, label, value } rows, in the organiser's order. Questions deleted since are skipped. */
+export function answerRows(questions, answers = {}) {
+  return questions
+    .filter((q) => answers[q.id] != null)
+    .map((q) => ({ id: q.id, label: q.label, value: formatAnswer(q, answers[q.id]) }))
+    .filter((r) => r.value)
+}
+
 /** "Shown when 'Do you want aso-ebi?' is Yes" (for the form builder and preview). */
 export function describeCondition(q, questions) {
   if (!q.showIf) return ''
