@@ -85,7 +85,7 @@ export function BookingForm({ form, event, preview = false, banner }) {
   const submitText = preview ? 'Check the form' : totals.totalKobo > 0 ? `Confirm booking · ${formatNaira(totals.totalKobo)}` : 'Confirm booking'
 
   return (
-    <form {...form.formProps} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <form {...form.formProps} className={preview ? 'block' : 'grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]'}>
       <div className="min-w-0 space-y-10">
         {banner}
         <ErrorSummary form={form} />
@@ -151,7 +151,9 @@ export function BookingForm({ form, event, preview = false, banner }) {
         </Section>
       </div>
 
-      {/* Desktop: the summary follows you down the page. */}
+      {/* Desktop: the summary follows you down the page. Phones: a bar with the total. Neither in the preview. */}
+      {!preview && (
+        <>
       <aside className="hidden lg:block" aria-label="Your order">
         <div className="foil-edge sticky top-24 rounded-2xl bg-panel p-5 shadow-card">
           <p className="text-sm font-bold tracking-wide text-gele-ink uppercase">Your order</p>
@@ -164,10 +166,9 @@ export function BookingForm({ form, event, preview = false, banner }) {
         </div>
       </aside>
 
-      {/* Phones: the total and the button stay in reach at the bottom. */}
       <div
         data-sticky-bar
-        className={`${preview ? 'hidden' : ''} fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden`}
+        className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden"
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <div>
@@ -179,6 +180,8 @@ export function BookingForm({ form, event, preview = false, banner }) {
           </Button>
         </div>
       </div>
+        </>
+      )}
     </form>
   )
 }

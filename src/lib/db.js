@@ -1,10 +1,11 @@
 import { STORAGE_PREFIX } from '../config.js'
-import { findPromo, normaliseCode, promoDiscount, describePromo, withAvailability } from './booking.js'
+import { findPromo, normaliseCode, promoDiscount, describePromo, soldByTicket, withAvailability } from './booking.js'
 import { bookingFromValues, validateBooking } from './bookingRules.js'
-import { newId, newReference } from './ids.js'
-import { overlaps, rangeFor } from './dates.js'
+import { newId, newReference, slugify, uniqueSlug } from './ids.js'
+import { isoToLagosInput, overlaps, rangeFor } from './dates.js'
+import { formToEvent, validateEvent } from './eventRules.js'
 import { createSeed } from './seed.js'
-import { cleanDb } from './schema.js'
+import { cleanDb, cleanEvent } from './schema.js'
 import { readValidated, removeKey, writeJSON } from './storage.js'
 
 /*
@@ -148,6 +149,52 @@ export async function getOrganiserEvents({ signal } = {}) {
   )
 }
 
+/* ---------- Organiser: events ---------- */
+
+/** One event for its organiser: promo codes included, plus how many of each ticket are booked. */
+export async function getEventForOrganiser(id, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  const event = eventOr404(db, (e) => e.id === id)
+  return copy(withAvailability(event, db.bookings))
+}
+
+function checkedEvent(values, ctx, identity) {
+  const errors = validateEvent(values, ctx)
+  if (Object.keys(errors).length) throw new ApiError('INVALID', 'Some details need fixing before this can be saved.', errors)
+  // formToEvent builds the record; cleanEvent is a last check that it's something we'd accept back from storage.
+  const event = cleanEvent(formToEvent(values, identity))
+  if (!event) throw new ApiError('INVALID', 'Something about this event couldn’t be saved. Check every step and try again.')
+  return event
+}
+
+/** Create an event from the editor's values. Its URL slug comes from the title, made unique. */
+export async function createEvent(values, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  const slug = uniqueSlug(slugify(values.title), db.events.map((e) => e.slug))
+  const event = checkedEvent(values, { isNew: true }, { id: newId('evt'), slug })
+  db.events.push(event)
+  save(db)
+  return copy(event)
+}
+
+/**
+ * Save changes to an event. The slug never changes (links already shared
+ * on WhatsApp keep working), and the rules get the live booking counts,
+ * so a ticket's quantity can't drop below what's been booked.
+ */
+export async function updateEvent(id, values, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  const existing = eventOr404(db, (e) => e.id === id)
+  const sold = soldByTicket(db.bookings.filter((b) => b.eventId === id))
+  const event = checkedEvent(values, { isNew: false, originalStartsAt: isoToLagosInput(existing.startsAt), sold }, { id, slug: existing.slug, createdAt: existing.createdAt })
+  db.events = db.events.map((e) => (e.id === id ? event : e))
+  save(db)
+  return copy(event)
+}
+
 /* ---------- Bookings ---------- */
 
 /**
@@ -202,6 +249,30 @@ export async function getBooking(reference, { signal } = {}) {
   if (!booking) throw new ApiError('NOT_FOUND', 'We couldn’t find a booking with that reference.')
   const event = eventOr404(db, (e) => e.id === booking.eventId)
   return copy({ booking, event: toPublic(withAvailability(event, db.bookings)) })
+}
+
+/** Every booking for an event, newest first (the organiser's dashboard). */
+export async function getBookings(eventId, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  eventOr404(db, (e) => e.id === eventId)
+  return copy(db.bookings.filter((b) => b.eventId === eventId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)))
+}
+
+/**
+ * Cancel a booking. Nothing else to update: spots left are always counted
+ * from confirmed bookings, so its places are free again straight away.
+ */
+export async function cancelBooking(bookingId, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  const booking = db.bookings.find((b) => b.id === bookingId)
+  if (!booking) throw new ApiError('NOT_FOUND', 'That booking no longer exists.')
+  if (booking.status === 'cancelled') return copy(booking)
+  booking.status = 'cancelled'
+  booking.cancelledAt = now().toISOString()
+  save(db)
+  return copy(booking)
 }
 
 /* ---------- Waitlist ---------- */

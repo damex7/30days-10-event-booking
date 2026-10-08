@@ -2,9 +2,11 @@ import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './components/layout/Layout.jsx'
 import Book from './pages/Book.jsx'
 import Confirmation from './pages/Confirmation.jsx'
+import EventEditor from './pages/EventEditor.jsx'
 import EventPage from './pages/EventPage.jsx'
 import Events from './pages/Events.jsx'
 import NotFound from './pages/NotFound.jsx'
+import OrganiseHome from './pages/OrganiseHome.jsx'
 import PrintTicket from './pages/PrintTicket.jsx'
 
 /*
@@ -21,6 +23,9 @@ export const router = createBrowserRouter([
       { path: '/events/:slug/book', element: <Book /> },
       { path: '/bookings/:reference', element: <Confirmation /> },
       { path: '/bookings/:reference/ticket', element: <PrintTicket /> },
+      { path: '/organise', element: <OrganiseHome /> },
+      { path: '/organise/new', element: <EventEditor /> },
+      { path: '/organise/:id/edit', element: <EventEditor /> },
       { path: '*', element: <NotFound /> },
     ],
   },

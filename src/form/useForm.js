@@ -177,10 +177,14 @@ export function useForm({ initialValues, validate, onSubmit }) {
   )
 
   // After a failed submit, wait for the render that shows the errors, then focus the first.
+  // The order is read from the DOM right now: that render may have opened sections
+  // (a collapsed question with an error) that weren't on the page a moment ago.
   useEffect(() => {
     if (focusRequest === 0) return
-    const first = ordered(allErrorsRef.current)[0]
-    if (first) focusField(first.path)
+    const errs = allErrorsRef.current
+    const els = formRef.current?.querySelectorAll('[data-field]') ?? []
+    const first = Array.from(els, (el) => el.dataset.field).find((path) => errs[path]) ?? Object.keys(errs)[0]
+    if (first) focusField(first)
     // Only when a new request is made.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusRequest])
