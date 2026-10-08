@@ -136,6 +136,18 @@ export function useForm({ initialValues, validate, onSubmit }) {
   }, [])
 
   /**
+   * Hide errors again for paths matching a test. Used when list items move:
+   * after removing guest 2, "attendees.2.name" means a different person,
+   * so an error revealed for the old guest 2 shouldn't jump onto the new one.
+   */
+  const forget = useCallback((test) => {
+    setRevealed((prev) => {
+      const next = new Set([...prev].filter((path) => !test(path)))
+      return next.size === prev.size ? prev : next
+    })
+  }, [])
+
+  /**
    * Blur handler for a field or a group. For a radio/checkbox group it's put on the
    * <fieldset>: moving between options inside the group isn't "leaving" it.
    */
@@ -221,6 +233,7 @@ export function useForm({ initialValues, validate, onSubmit }) {
     /** Visible errors in page order, with labels: what the error summary lists. */
     summary: ordered(errors),
     touch,
+    forget,
     blurHandler,
     focusField,
     idFor,

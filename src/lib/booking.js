@@ -65,18 +65,26 @@ export const blankAttendee = (ticketId) => ({ id: newId('att'), ticketId, name: 
 
 /**
  * Keep the list of guests in step with the ticket quantities.
- * Guests are grouped by ticket type, in the event's ticket order. For each
- * type we keep the guests already there (so nothing typed is lost), add
- * blank ones when the quantity goes up, and drop from the END of that
- * type's group when it goes down. Removing a specific guest is done by the
- * caller (it removes that guest, then lowers the quantity).
+ * The guest list IS the quantity (2 Regular = 2 Regular guests), so the
+ * two can never disagree. When a quantity changes:
+ *   - existing guests keep their place, so nothing typed is lost and
+ *     "Guest 1" (often you) never moves;
+ *   - going down drops the LAST guests of that ticket type;
+ *   - going up adds blank guests at the end.
+ * Removing one particular guest is simpler still: the caller filters them
+ * out, and the quantity drops by itself.
  */
 export function syncAttendees(attendees, quantities, tickets) {
+  const counts = {}
   const next = []
+  for (const a of attendees) {
+    if ((counts[a.ticketId] ?? 0) < (quantities[a.ticketId] ?? 0)) {
+      next.push(a)
+      counts[a.ticketId] = (counts[a.ticketId] ?? 0) + 1
+    }
+  }
   for (const t of tickets) {
-    const want = quantities[t.id] ?? 0
-    const have = attendees.filter((a) => a.ticketId === t.id)
-    for (let i = 0; i < want; i++) next.push(have[i] ?? blankAttendee(t.id))
+    for (let n = counts[t.id] ?? 0; n < (quantities[t.id] ?? 0); n++) next.push(blankAttendee(t.id))
   }
   return next
 }

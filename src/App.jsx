@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './components/layout/Layout.jsx'
+import Book from './pages/Book.jsx'
 import EventPage from './pages/EventPage.jsx'
 import Events from './pages/Events.jsx'
 import NotFound from './pages/NotFound.jsx'
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <Events /> },
       { path: '/events/:slug', element: <EventPage /> },
+      { path: '/events/:slug/book', element: <Book /> },
       { path: '*', element: <NotFound /> },
     ],
   },

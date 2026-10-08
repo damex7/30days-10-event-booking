@@ -1,5 +1,7 @@
 import { STORAGE_PREFIX } from '../config.js'
 import { findPromo, normaliseCode, promoDiscount, describePromo, withAvailability } from './booking.js'
+import { bookingFromValues, validateBooking } from './bookingRules.js'
+import { newId, newReference } from './ids.js'
 import { overlaps, rangeFor } from './dates.js'
 import { createSeed } from './seed.js'
 import { cleanDb } from './schema.js'
@@ -146,6 +148,62 @@ export async function getOrganiserEvents({ signal } = {}) {
   )
 }
 
+/* ---------- Bookings ---------- */
+
+/**
+ * Make a booking from the booking form's values.
+ * The browser already validated them, but a server never trusts that, so:
+ *   - availability is worked out again from the bookings saved RIGHT NOW
+ *     (someone in another tab may have taken the last VIP seats);
+ *   - the same validateBooking() runs again;
+ *   - the promo code is looked up again, and prices come from the event,
+ *     never from the browser;
+ *   - hidden answers are dropped and phone numbers normalised.
+ * Problems come back as ApiError with `details` ({ path: message }), which
+ * useForm shows on the matching fields.
+ */
+export async function createBooking(eventId, values, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  const event = withAvailability(eventOr404(db, (e) => e.id === eventId), db.bookings)
+  const errors = validateBooking({ ...values, promo: null }, event)
+  // Re-check the promo ourselves instead of trusting values.promo.
+  const code = normaliseCode(values.promoCode)
+  const promo = code ? findPromo(event, code) : null
+  delete errors.promoCode
+  if (code && !promo) errors.promoCode = `“${code}” isn’t a valid code for this event.`
+  if (Object.keys(errors).length) {
+    const soldOut = 'tickets' in errors
+    throw new ApiError(
+      soldOut ? 'SOLD_OUT' : 'INVALID',
+      soldOut ? 'Some tickets sold out while you were booking. Check your tickets and try again.' : 'Some details need fixing.',
+      errors,
+    )
+  }
+  const booking = {
+    id: newId('bkg'),
+    reference: newReference(),
+    eventId,
+    status: 'confirmed',
+    createdAt: now().toISOString(),
+    cancelledAt: null,
+    ...bookingFromValues(values, event, promo),
+  }
+  db.bookings.push(booking)
+  save(db)
+  return copy(booking)
+}
+
+/** A booking by its reference, with its event (for the confirmation and ticket pages). */
+export async function getBooking(reference, { signal } = {}) {
+  await respond(signal)
+  const db = load()
+  const booking = db.bookings.find((b) => b.reference === String(reference).toUpperCase())
+  if (!booking) throw new ApiError('NOT_FOUND', 'We couldn’t find a booking with that reference.')
+  const event = eventOr404(db, (e) => e.id === booking.eventId)
+  return copy({ booking, event: toPublic(withAvailability(event, db.bookings)) })
+}
+
 /* ---------- Waitlist ---------- */
 
 export async function joinWaitlist(eventId, { name, email, phone, ticketId = null }, { signal } = {}) {
@@ -174,9 +232,10 @@ export async function checkPromo(eventId, code, subtotalKobo, { signal } = {}) {
   await respond(signal)
   const event = eventOr404(load(), (e) => e.id === eventId)
   const promo = findPromo(event, code)
-  if (!promo) throw new ApiError('PROMO_INVALID', `“${normaliseCode(code)}” isn’t a valid code for this event. Check the spelling, or remove it to continue.`)
-  if (subtotalKobo === 0) throw new ApiError('PROMO_INVALID', 'Your tickets are free, so there’s nothing to discount. Remove the code to continue.')
-  return { code: promo.code, label: describePromo(promo), discountKobo: promoDiscount(promo, subtotalKobo) }
+  if (!promo) throw new ApiError('PROMO_INVALID', `“${normaliseCode(code)}” isn’t a valid code for this event. Check the spelling, or clear the box to continue.`)
+  if (subtotalKobo === 0) throw new ApiError('PROMO_INVALID', 'Your tickets are free, so there’s nothing to discount. Clear the box to continue.')
+  // Once applied, the kind and value are the guest's to know, so the total can update as they change tickets.
+  return { code: promo.code, kind: promo.kind, value: promo.value, label: describePromo(promo), discountKobo: promoDiscount(promo, subtotalKobo) }
 }
 
 /* ---------- Demo ---------- */
