@@ -1,0 +1,19 @@
+# dependencies and build output
+node_modules
+dist
+dist-ssr
+*.local
+
+# environment files: real keys never go in git (.env.example is the template)
+.env
+.env.local
+.env.*.local
+
+# logs and editor files
+logs
+*.log
+npm-debug.log*
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea

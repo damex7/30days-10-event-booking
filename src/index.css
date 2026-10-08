@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+/* Dark mode follows <html data-theme="dark">, set by index.html and useTheme */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+  Design tokens. Each one becomes a CSS variable (--color-gele) AND a
+  Tailwind utility (bg-gele, text-ink-soft, border-line, font-display...).
+
+  The look: an aso-ebi invitation card. Cream card stock, a deep magenta
+  "gele" (head-tie) for the brand and every main action, gold foil for
+  decoration (never for text on light: it can't reach 4.5:1), deep teal for
+  "Free" and success, and plum-brown ink instead of black. A faint lace
+  pattern (the `lace` utility below) shows up where a real card would be
+  embossed.
+
+  Dark mode is the party hall after sunset: plum-black, pink gele, sequin gold.
+*/
+@theme {
+  --color-paper: #faf3ea; /* page: card stock */
+  --color-panel: #fffcf8; /* cards */
+  --color-panel-2: #f2e7da; /* recessed: inputs, hovers, skeletons */
+  --color-ink: #2a1520; /* main text: plum-brown */
+  --color-ink-soft: #573d4b; /* secondary text */
+  --color-ink-faint: #6b5260; /* captions, hints (4.5:1+ on paper) */
+  --color-line: #e8d8c9; /* hairlines */
+  --color-line-strong: #8c7480; /* input borders (3:1+ against panel) */
+
+  --color-gele: #8f1150; /* brand + primary action */
+  --color-gele-hover: #730b40;
+  --color-on-gele: #ffffff;
+  --color-gele-soft: #fbe1ec;
+  --color-gele-ink: #8f1150; /* gele used as text */
+
+  /* The header band: a strip of gele cloth with gold lace on it. */
+  --color-band: #8f1150;
+  --color-band-deep: #6e0c3d;
+  --color-on-band: #fff6ec;
+
+  --color-gold: #e2ad2f; /* foil: borders, badges, decoration */
+  --color-on-gold: #2a1a00;
+  --color-gold-soft: #f8ebc7;
+  --color-gold-ink: #7a5600; /* gold used as text */
+
+  --color-teal: #0d6e68; /* free, success, confirmed */
+  --color-on-teal: #ffffff;
+  --color-teal-soft: #d5eeea;
+  --color-teal-ink: #0a5f59;
+
+  --color-danger: #b42318;
+  --color-danger-soft: #fde4e1;
+
+  --color-focus: #8f1150;
+
+  --font-sans: "Commissioner", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Noto Serif Display", Georgia, ui-serif, serif;
+  --font-mono: "Chivo Mono", ui-monospace, Consolas, monospace;
+
+  --shadow-card: 0 1px 0 rgb(42 21 32 / 0.05), 0 12px 28px -16px rgb(42 21 32 / 0.35);
+  --shadow-pop: 0 24px 50px -14px rgb(42 21 32 / 0.45);
+
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+  --animate-fade-in: fade-in 200ms ease-out;
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Dark: the same token names with night values, so components never change. */
+[data-theme="dark"] {
+  --color-paper: #160a11;
+  --color-panel: #211019;
+  --color-panel-2: #2d1824;
+  --color-ink: #fbecf2;
+  --color-ink-soft: #dcc2cf;
+  --color-ink-faint: #b99fad;
+  --color-line: #3b2331;
+  --color-line-strong: #8b6a7b;
+
+  --color-gele: #ff6aae;
+  --color-gele-hover: #ff8fc2;
+  --color-on-gele: #2b0016; /* dark text: white on light pink fails contrast */
+  --color-gele-soft: #48132f;
+  --color-gele-ink: #ff93c4;
+
+  --color-band: #3d0f27;
+  --color-band-deep: #2a0a1b;
+  --color-on-band: #fbecf2;
+
+  --color-gold: #f0c04a;
+  --color-on-gold: #2a1a00;
+  --color-gold-soft: #3a2c0e;
+  --color-gold-ink: #f4cf6e;
+
+  --color-teal: #4fd1c5;
+  --color-on-teal: #032420;
+  --color-teal-soft: #0f302c;
+  --color-teal-ink: #74dccf;
+
+  --color-danger: #ff8b80;
+  --color-danger-soft: #3f1517;
+
+  --color-focus: #f0c04a;
+
+  --shadow-card: 0 1px 0 rgb(0 0 0 / 0.3), 0 12px 26px -14px rgb(0 0 0 / 0.75);
+  --shadow-pop: 0 24px 50px -12px rgb(0 0 0 / 0.75);
+  color-scheme: dark;
+}
+
+/*
+  Lace: the embossed pattern on a printed invitation. Small rings on a
+  diagonal grid, drawn with radial gradients (no image files). It's tinted
+  from --lace (defaults to the gold foil) so it works on any surface.
+*/
+@utility lace {
+  background-image:
+    radial-gradient(circle at center, transparent 0 3px, color-mix(in oklab, var(--lace, var(--color-gold)) 38%, transparent) 3.5px 4.5px, transparent 5px),
+    radial-gradient(circle at center, color-mix(in oklab, var(--lace, var(--color-gold)) 30%, transparent) 0 1.5px, transparent 2px);
+  background-size:
+    20px 20px,
+    20px 20px;
+  background-position:
+    0 0,
+    10px 10px;
+}
+
+/* Surfaces on the band get a gold focus ring (magenta on magenta would vanish). */
+@utility on-band {
+  --color-focus: #f0c04a;
+  color: var(--color-on-band);
+}
+
+/* The gold double rule along the edge of an invitation card. */
+@utility foil-edge {
+  border: 1px solid var(--color-gold);
+  box-shadow:
+    inset 0 0 0 3px var(--color-panel),
+    inset 0 0 0 4px color-mix(in oklab, var(--color-gold) 55%, transparent);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+  /* One visible focus style everywhere, only for keyboard users. */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  /* Headings that receive focus programmatically (page changes) shouldn't show a ring. */
+  [tabindex="-1"]:focus:not(:focus-visible) {
+    outline: none;
+  }
+  /* Anything we scroll or focus into view clears the sticky header. */
+  :where(input, select, textarea, button, fieldset, h1, h2, [id]) {
+    scroll-margin-top: 6rem;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-on-gold);
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+  dialog::backdrop {
+    background: rgb(22 10 17 / 0.6);
+    backdrop-filter: blur(2px);
+  }
+  /* Native checkboxes, radios and date pickers pick up the brand colour. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-gele);
+  }
+}
+
+/*
+  Pages with a sticky bottom bar on phones (the booking form) mark it with
+  data-sticky-bar; the page then leaves room at the end so the bar never
+  covers the last field or the footer.
+*/
+@media (width < 64rem) {
+  body:has([data-sticky-bar]) {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}
+
+/*
+  Printing (the ticket page): plain white paper, no header, footer or
+  buttons, and each ticket kept whole on one page.
+*/
+@media print {
+  :root,
+  [data-theme="dark"] {
+    --color-paper: #ffffff;
+    --color-panel: #ffffff;
+    --color-ink: #000000;
+    --color-ink-soft: #222222;
+    --color-ink-faint: #444444;
+    color-scheme: light;
+  }
+  [data-print-hide] {
+    display: none !important;
+  }
+  [data-print-ticket] {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
